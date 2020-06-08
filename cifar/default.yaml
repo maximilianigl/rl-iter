@@ -1,0 +1,37 @@
+meta:
+  label:
+  conditions:
+
+server:
+  name:
+  gpu_id:
+
+seed:
+
+lr: 0.0003
+epochs: 4000
+use_bn: False
+
+use_vib: False
+vib_beta: 1.
+
+self_distillation: 0  # Off for 0
+self_distillation_epochs: 1000
+self_dist_crit: onehot  # `kl` or `onehot`
+
+frozen_test_epochs: 0  # Off for 0
+
+annealing:
+    # consistent, random, permute
+    # anneal_zero, anneal_consistent,
+    # anneal_random
+    # Or None to switch off
+    # Or size to anneal size
+  type:
+  never_same:  # None: True for consistent, otherwise False
+  every_n_epochs:   # If None, will be duration
+  add_fraction:
+  duration: 1000
+  start_fraction: 0.01
+
+

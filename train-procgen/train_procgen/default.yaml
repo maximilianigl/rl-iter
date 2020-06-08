@@ -1,0 +1,115 @@
+
+## For my experimental setup. Leave empty and ignore
+meta:
+  label:
+  conditions:
+
+server:
+  name:
+  gpu_id:
+
+seed:
+
+# If set, sets reduces nsteps=32 and num_envs=2
+# and timesteps_anneal=300, timesteps_initial=200
+debug: False
+
+# eval is for loading a pre-trained model
+# can be ignored unless you wanna do something very specific
+# Also, won't work with TinyDB as storage engine, but only with MongoDB
+eval:
+  # Should be the meta.label of the run to load from
+  load_id:
+  # Filename of the model as saved in db
+  file_name:
+  # Don't train anymore?
+  eval_only: False
+  # The entire session gets loaded, i.e. both student and teacher
+  # This flag allows switching to the student immediately
+  # after loading
+  switch_after_load: False
+  # Write policy latents to file
+  # Creates A LOT of data
+  save_latent: False  # Requires burnin but not v2
+
+## Iter
+iter_loss:
+  # Switch ITER on?
+  use: False
+
+  # Use off policy RL terms during distillation?
+  use_burnin_rl_loss: True
+
+  policy_reg_coef: 1.  # max alpha_pi
+  value_reg_coef: 0.5  # max alpha_V
+  use_reg_loss_value: True
+  use_reg_loss_policy: True
+  update_old_policy: True  # Update teacher while distilling?
+
+  timesteps_free: 0  # Normal RL training between distillations
+  timesteps_initial: 50_000_000  # Normal RL training in beginning
+  timesteps_anneal: 70_000_000  # Length of distillation phase
+
+  # If you use SEQUENTIAL ITER, make sure to have enough storage space
+  v2: False  # Switches SEQUENTIAL ITER on (instead of parallel)
+  v2_number_epochs: 25  # How often to loop over data
+  v2_buffer_size:  # Leave empty to determine by timesteps_anneal
+  v2_use_files: True  # Write to files instead of keeping in memory
+  # Buffersize/frames/Memory/Total Memory
+  # 100/1.6M/20G/80G
+  # 500/8.3M/100G/400G
+
+  alpha_reg:
+    schedule: linear  # 'const', 'linear', 'relu', 'sigma', "step"
+    const: 1  # for 'const' schedule
+    thresh: 0.5  # for 'relu' schedule
+    nr_phases: 1
+  number_cycles: 2  # Unlimited for number_cycles < 0
+
+  # When using IBAC with ITER, we need to decide whether to use
+  # The deterministic or stochastic latent for VF
+  stochastic_vf_in_distill_update: True
+  stochastic_vf_in_rl_update: False
+
+  # For ablation:
+  # Don't switch burnin->train, but only save
+  # and reset burnin to train new one
+  dont_switch_just_reset_burnin: False
+  # Even if update_old_policy=False, still update
+  # Old policy during cycle_count=0
+  update_old_policy_in_initial: False
+
+
+arch:
+
+  reg: # None, 'ibac', 'vib', 'dropout', 'noLayer'
+  dropout_rate: 0.2
+  info_loss_coef: 0.0001  # For vib or ibac
+  l2w_weight: 0.0001  # weight decay
+  nonlinearity: relu # None, 'relu' or 'tanh'
+  add_extra_layer_after: False
+  add_extra_layer_before: False
+
+# ProcGen config
+env_name: starpilot
+paint_vel_info: False
+distribution_mode: hard  # 'easy' or 'hard'
+num_levels: 500
+start_level: 0
+
+# Defaults
+test_worker_interval: 4
+log_interval: 1
+num_envs : 64
+learning_rate : 5.0e-04  # 5.0e-04
+lr_schedule:  # None or "linear"
+ent_coef : .01
+gamma : .999
+lam : .95
+nsteps : 256
+nminibatches : 8
+ppo_epochs : 3
+clip_range : .2
+timesteps_per_proc : 250_000_000
+use_vf_clipping : True
+

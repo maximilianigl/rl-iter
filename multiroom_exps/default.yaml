@@ -1,0 +1,70 @@
+
+## This is just book-keeping information for my experimental setup - can be ignored
+meta:
+  label: default
+  conditions:
+
+server:
+  name:
+  gpu_id:
+
+seed:
+
+## Default configs
+
+# When not None, load the model from given id from the Database
+load_id:
+
+# Which ITER type: distill is normal, kickstarting executes the student instead
+# of the teacher during distillation. 'none' switches ITER off
+iter_type: none #'kickstarting', 'distill' or 'none'
+
+experimental:
+  # Keep updating old policy and value function while alpha>0? Don't do this for kickstarting because
+  # It won't get any Policy gradients but the regularization will still have gradients!
+  also_update_old_policy: # If None, set automatically to False for kickstarting, otherwise True
+
+  no_rl_loss_during_anneal: False
+  use_reg_loss_value: True
+  use_reg_loss_policy: True
+
+# How many frames to use for initial RL training, between distillation phases (free) and
+# during distillation phase (anneal)
+frames_initial: 4.0e+07  # Defaults to frames_free
+frames_free: 0
+frames_anneal: 4.0e+07
+
+# How to anneal alpha from 1 to 0 during distillation
+schedule_function: linear # "linear" or "const"
+
+# Env name and which type of observation.
+# If both are 'False', we'll use ego-centric partial observability
+# If POfullObs is True, the agent gets the full grid, but with 'unseen' part just black
+# 'unseen' is everything far away or behind walls
+# If fullObs is True, we get the fully observable grid
+env_name: MiniGrid-MultiRoom-N4r-v0
+POfullObs: False
+fullObs: True
+
+# Standard RL stuff
+frames: 3.0e+08
+policy_reg_coef: 1.
+value_reg_coef: 0.5
+procs: 32
+frames_per_proc: 128
+log_interval: 10
+save_interval: 1000
+discount: 0.99
+lr: 3.0e-04
+gae_lambda: 0.95
+entropy_coef: 0.01
+value_loss_coef: 0.5
+max_grad_norm: 0.5
+optim_eps: 1.0e-05
+optim_alpha: 0.99
+clip_eps: 0.2
+epochs: 4
+batch_size: 512
+
+
+
